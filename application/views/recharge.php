@@ -19,22 +19,9 @@
                 				<div class="form-group form-style">
                 					<label class="drinkcard-cc dth" for="dth" id="dthTab"></label>
                 				</div>
-                        		<?php echo form_open('recharge/rcgProceed');?>
+                        		<?php echo form_open('recharge/preview');?>
                         			<div class="form-group" id="layoutPanel"></div>
                         		<?php echo form_close();?>
-                        		<!-- <div class="form-group">                        			
-                        			<select class="form-control" id="categoryId" onchange="changeCategory()">
-                        				<option value="0">Select</option>
-	                            		<?php //foreach ($services as $rowSerices) {
-	                            			//echo "<option value='".$rowSerices->category_id."'>".$rowSerices->category_name."</option>";
-	                            		//};?>
-                                    </select>                                    
-                                </div>
-                                <div class="form-group" id="subCate"></div>
-                                <div class="form-group" id="allFields"></div>
-                                <div class="form-group" id="submitBtn">
-                                	<input type="submit" id="makeRecharge" name="makeRecharge" value="Proceed to Recharge" class="btn btn-success">
-                                </div> -->
                         	</div> 
                         	<!--offer display here-->
                         	<div class="col-lg-6">
@@ -47,42 +34,10 @@
         </div>
 	</div>
 </div>
+
 <script type="text/javascript" src="<?php echo $this->config->item('base_url');?>assets/js/jquery.min.js"></script>
+
 <script type="text/javascript">
-	/*function changeCategory(){
-		var cateId = $("#categoryId").val();
-		if (cateId > 0) {
-			$.ajax({ 
-				url: '<?php //echo base_url("recharge/serviceList");?>',
-	         	data: {id: cateId},
-	         	type: 'POST',
-	         	success: function(output) {
-	                var html = '<select class="form-control" id="subCategoryId" onchange="changeSubCategory()"><option value="0">Select Operator</option>'+output+'</select>';
-	                $("#subCate").html(html);
-	            }
-			});
-		}
-		else{
-			$("#subCate").html("");
-		}
-	}*/
-	/*function changeSubCategory(){
-		var cateId = $("#categoryId").val();
-		var subCatId = $("#subCategoryId").val();
-		if(subCatId > 0){
-			$.ajax({ 
-				url: '<?php //echo base_url("recharge/fieldLayout");?>',
-	         	data: {id: cateId},
-	         	type: 'POST',
-	         	success: function(output) {
-	                $("#allFields").html(output);
-	            }
-			});
-		}
-		else{
-			$("#allFields").html("");
-		}
-	}*/
 	$( document ).ready(function() {
 		$("#mobTab").on("click", function(){
 			rcgPanelLayout('mobile');
@@ -93,7 +48,15 @@
 		$("#layoutPanel").on("click", function(){
 			//alert($("input[name=dataCardType]:checked").val());
 		})
+       /* $("#submitMobBtn").on("click", function(){
+            submitForm();
+        })*/
+
+        //submit button
 	})
+    $(window).on("load", function(){
+        rcgPanelLayout('mobile');
+    })
 	function rcgPanelLayout(str){
 		$.ajax({ 
 			url: '<?php echo base_url("recharge/fieldLayout");?>',
@@ -104,12 +67,37 @@
             }
 		});
 	}
-	/*$(window).ready(function(){
-		$("#makeRecharge").prop('disabled', true);
-		$("input[name='rechargeAmt']").keyup(function(){
-			alert();
-			var amtField = $("#rechargeAmt").val();
-			alert(amtField);
-		})
-	})*/
+    function submitForm(){
+        var mobVal = $("#mobileNo").val();
+        var rcgAmt = $("#rechargeAmt").val();
+        var rcgType = $(("input[name=dataCardType]:checked")).val();
+        var oprVal = $("#rechargeComp").val();
+        console.log("mobVal "+mobVal);
+        console.log("rcgAmt "+rcgAmt);
+        console.log("rcgType "+rcgType);
+        console.log("oprVal "+oprVal);
+
+        if(mobVal == " " || mobVal == ""){
+            $("#mobileNo").css("border","1px solid red");
+        }
+        else if(mobVal.length < 10 || mobVal.length > 10){
+            $("#mobileNo").css("border","1px solid red");
+        }
+        else{
+            $("#mobileNo").css("border","1px solid #ccc");   
+        }
+        if(rcgAmt == " " || rcgAmt == ""){
+            $("#rechargeAmt").css("border","1px solid red");
+        }
+        else{
+            $("#rechargeAmt").css("border","1px solid #ccc");   
+        }
+        if(oprVal == 0){
+            $("#rechargeComp").css("border","1px solid red");
+        }
+        else{
+            $("#rechargeComp").css("border","1px solid #ccc");   
+        }
+        return false;
+    }
 </script>

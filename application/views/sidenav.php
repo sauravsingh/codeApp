@@ -19,17 +19,46 @@
                 <li>
                     <a href="<?php echo base_url('recharge');?>"><i class="fa fa-shopping-cart fa-fw"></i> Recharge</a>
                 </li>
-                <!-- <li>
-                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
+                <?php if($_SESSION['userType'] == 1){?>
+                <li>
+                    <a href="<?php echo base_url('configuration');?>"><i class="fa fa-wrench fa-fw"></i> Configure</a>
+                </li>
+                <?php }?>
+                <li>
+                    <a href="#"><i class="fa fa-money fa-fw"></i> Wallet<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <?php if($_SESSION['userType'] == 1){?>
+                            <li>
+                                <a href="<?php echo base_url('wallet/requestedAmount');?>">Requested Amount</a>
+                            </li>
+                            <!-- <li>
+                                <a href="<?php //echo base_url('wallet/approvedAmount');?>">Approved</a>
+                            </li> -->
+                        <?php }
+                        else{?>
+                            <li>
+                                <a href="<?php echo base_url('wallet/requestBalance');?>">Request Amount</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo base_url('wallet/passbook');?>">Passbook</a>
+                            </li>
+                        <?php }?>
+                        
+                    </ul>
+                </li>
+                <?php if($_SESSION['userType'] == 1){?>
+                <li>
+                    <a href="#"><i class="fa fa-users fa-fw"></i> Users<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="flot.html">Flot Charts</a>
+                            <a href="<?php echo base_url('users/addUser');?>">Add User</a>
                         </li>
                         <li>
-                            <a href="morris.html">Morris.js Charts</a>
+                            <a href="<?php echo base_url('users/usersList');?>">Users List</a>
                         </li>
                     </ul>
-                </li> -->
+                </li>
+                 <?php }?>
             </ul>
         </div>
     </div>

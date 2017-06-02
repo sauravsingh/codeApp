@@ -15,4 +15,5 @@ class Common extends CI_Controller {
 		echo "<center><h3>You have been logout, wait page is redirecting...</h3></center>";
 		header("Refresh:5;url=".base_url()."login");
 	}
+	
 }

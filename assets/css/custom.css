@@ -134,7 +134,7 @@
 .forgot-password:focus{
     color: rgb(12, 97, 33);
 }
-.rightSide{float: right !important; vertical-align: middle; padding-top: 13px;}
+.rightSide{float: right !important; vertical-align: middle; padding-top: 13px;text-align: right;}
 .padd50{padding-top: 50px;}
 
 #wrapper {
@@ -606,3 +606,11 @@ input[type="radio"] + label {
     margin-left:8px;
     vertical-align: middle;
     margin-top: -5px;}
+.well{text-align: center;}
+.well a:hover{text-decoration:none;cursor: pointer;}
+.curPointer{cursor: pointer;}
+.readonly{border: none !important; background-color: #fff !important;}
+.fullWidth{width: 100%;position: fixed;bottom: 0;padding: 5px 0;}
+#flashMsg{right: 0;position: fixed;padding: 3px;background: #ccc;color: #000;border-radius: 7px;}
+.padd20{padding-top: 20px;padding-bottom: 20px;}
+#loading{position: fixed;background: url(../images/loading.gif) cover;}
