@@ -18,6 +18,11 @@
                                       <h4 class="text-primary"><a href="<?php echo base_url('configuration/operatorConfig');?>">Mobile Operator </a></h4>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="well">
+                                      <h4 class="text-primary"><a href="<?php echo base_url('configuration/addCommission');?>">Add Commision </a></h4>
+                                    </div>
+                                </div>
                         	</div> 
                         	<!--offer display here-->
                         	<div class="col-lg-6">

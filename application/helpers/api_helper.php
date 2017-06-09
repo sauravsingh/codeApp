@@ -1,16 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Api extends CI_Controller{
-
-	function __construct(){
-	    parent::__construct();
-	    /*$this->load->library('session');
-	    if (!isset($_SESSION['userId'])) {
-	    	redirect('login');
-	    }*/
-	    //$this->load->Model('walletModel');
-	}
 	function index(){
 		echo "Access denied!";
 	}
@@ -24,18 +14,6 @@ class Api extends CI_Controller{
 		echo $_GET['PASSWORD'];
 	}
 
-	
-	/*function rechargeCall(){
-		$data = array(
-			'operator' => 'RA',
-			'number' => '1231231230',
-			'amount' => '10',
-			'reqref?' => 'A0000002',
-			'USERID' => 'marskrcg',
-			'PASSWORD' => 'k@rcg%02'
-			);
-		$this->cUrlCall($data);
-	}*/
 	function checkConnection(){
 		$url = "http://122.180.87.159:91/MARSConnectionStatus/";
 		$connStatus = file_get_contents($url);
@@ -52,21 +30,46 @@ class Api extends CI_Controller{
 		//$outputMsg = file_get_contents($url);
 		$outputMsg = "REQUEST ACCEPTED your ref=e3019121 mars_reference=RC307912735";
 		//$outputMsg = "REQUEST ERROR errorno=10;your ref=b726e6eb;mars_reason=Identical recharge already in queue";
+		return $outputMsg;
+	}
+	function makeCustomMsg($outputMsg=''){
 		if (strpos($outputMsg, 'REQUEST ACCEPTED') !== false) {
 		    $array = explode("=", $outputMsg);
 		    //print_r($array);
-		    echo "Response: ".$array[0]."<br>";
-		    echo "Ref code: ".$this->explodeString($array[1], ' ', 0)."<br>";
-		    echo "Mars Reference: ".$this->explodeString($array[2], ' ', 0);
+		    $outputArray = array(
+		    	'status' => 'success',
+		    	'response' => explodeString($array[0], ' ',0)." ".explodeString($array[0], ' ',1),
+		    	'refCode' => explodeString($array[1], ' ', 0),
+		    	'marsRef' => explodeString($array[2], ' ', 0)
+		    	);
+		    return $outputArray;
+		    /*echo "Response: ".explodeString($array[0], ' ',0)." ".explodeString($array[0], ' ',1)."<br>";
+		    echo "Ref code: ".explodeString($array[1], ' ', 0)."<br>";
+		    echo "Mars Reference: ".explodeString($array[2], ' ', 0);*/
 		}
 		elseif (strpos($outputMsg, 'REQUEST ERROR') !== false) {
 			$array = explode("=", $outputMsg);
 			//print_r($array);
-			echo "Response: ".$array[0]."<br>";
-			echo "Error Code: ".$this->explodeString($array[1], ';', 0)."<br>";
-			echo "Ref Code: ".$this->explodeString($array[2], ';', 0)."<br>";
+			$outputArray = array(
+				'status' => 'error',
+				'response' => $array[0],
+				'errorCode' => explodeString($array[1], ';', 0),
+				'refCode' => explodeString($array[2], ';', 0),
+				'message' => errorMsg($this->explodeString($array[1], ';', 0))
+				);
+			return $outputArray;
+			/*echo "Response: ".$array[0]."<br>";
+			echo "Error Code: ".explodeString($array[1], ';', 0)."<br>";
+			echo "Ref Code: ".explodeString($array[2], ';', 0)."<br>";
 			echo "Reason: ".$array[3]."<br>";
-			echo "Message: ".$this->errorMsg($this->explodeString($array[1], ';', 0))."<br>";
+			echo "Message: ".errorMsg($this->explodeString($array[1], ';', 0))."<br>";*/
+		}
+		else{
+			$outputArray = array(
+				'status' => 'unknown',
+				'message' => 'Output not set'
+				);
+			$outputArray;
 		}
 	}
 	function explodeString($array, $delimeter, $return){
@@ -120,6 +123,5 @@ class Api extends CI_Controller{
 				break;
 		}
 	}
-}
 
 //http://122.180.87.159:91/MARSrequest/?operator=RA&number=1231231230&amount=10&reqref=A0000002&userid=marskrcg&password=k@rcg%02

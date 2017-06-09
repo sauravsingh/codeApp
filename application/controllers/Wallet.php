@@ -10,7 +10,7 @@ class Wallet extends CI_Controller{
 	    if (!isset($_SESSION['userId'])) {
 	    	redirect('login');
 	    }
-	    $this->load->Model('walletModel');
+	    $this->load->Model('WalletModels','walletModel');
 	}
 
 	function requestBalance(){

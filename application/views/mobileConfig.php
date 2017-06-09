@@ -3,9 +3,10 @@
 
 	<div id="page-wrapper">
 		<div class="row">
-			<div class="col-lg-12">			
+			<div class="col-lg-10">			
 				<h1 class="page-header">Mobile Operator Configuration</h1>
 			</div>
+            <?php echo $this->main->goBack();?>
 		</div>
 		<div class="row">
             <div class="col-lg-12">
@@ -48,11 +49,6 @@
                                     ?>
                                     </table>
                                 </div>
-                        	</div> 
-                            
-                        	<!--offer display here-->
-                        	<div class="col-lg-6">
-	                        	
                         	</div>
                         </div>
                     </div>

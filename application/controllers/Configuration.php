@@ -27,4 +27,15 @@ class Configuration extends CI_Controller {
 		$this->load->view('mobileConfig', $data);
 		$this->load->view('footer');
 	}
+	function addCommission(){
+		$data['title'] = "Commission Add";
+		$this->load->view('header',$data);
+		$this->load->view('addCommission',$data);
+		$this->load->view('footer');
+	}
+	function setCommission(){
+		$id = $_POST['id'];
+		//$this->main->
+		echo json_encode($id);
+	}
 }

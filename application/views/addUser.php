@@ -13,7 +13,7 @@
             <div class="col-lg-12">
             	<div class="col-lg-4 form-group">
                     <label>Select User</label>
-                    <select class="form-control" id="userType" name="userType">
+                    <select class="form-control" id="userType" onchange="getSelectedList(this.value)" name="userType">
                     	<option value="" class="form-control">Select</option>
                         <?php
                         	foreach ($userType as $rowType) {
@@ -22,7 +22,12 @@
                         ?>
                     </select>
                 </div>
-            	<div class="col-lg-4 form-group">
+            	<div class="col-lg-4 form-group" id="mapWithUser"></div>
+            </div>
+        </div>
+        <div class="row">
+        	<div class="col-lg-12">
+        		<div class="col-lg-4 form-group">
             		<label>Enter Name</label>
             		<input type="text" name="name" id="name" placeholder="Enter name" class="form-control">
             	</div>
@@ -30,11 +35,6 @@
             		<label>Enter Email</label>
             		<input type="text" name="email" id="email" placeholder="Enter email" class="form-control">
             	</div>
-            	
-            </div>
-        </div>
-        <div class="row">
-        	<div class="col-lg-12">
 	        	<div class="col-lg-4 form-group">
 	        		<label>Enter Password</label>
 	        		<input type="password" name="pwd" id="pwd" placeholder="Enter password" class="form-control">
@@ -57,12 +57,13 @@
 		$("#createUser").on("click", function(e){
 			e.preventDefault();
 			var userType = $("#userType option:selected").val();
+			var superVisor = $("#mapUser option:selected").val();
 			var name = $("#name").val();
 			var email = $("#email").val();
 			var pwd = $("#pwd").val();
 			$.ajax({ 
 				url: '<?php echo base_url("users/addUserRecord");?>',
-	         	data: {userType: userType, name: name, email: email, pwd: pwd},
+	         	data: {userType: userType, superVisor: superVisor, name: name, email: email, pwd: pwd},
 	         	type: 'POST',
 	         	success: function(output) {
 	         		//alert(output);
@@ -75,4 +76,20 @@
 			});
 		})
 	})
+	function getSelectedList(str){
+		if(str == "" || str ==" " || str == "2"){
+			$("#mapWithUser").html("");
+		}
+		else{
+			$.ajax({ 
+				url: '<?php echo base_url("users/getUserForMap");?>',
+	         	data: {id: str},
+	         	type: 'POST',
+	         	success: function(output) {
+	         		//alert(output);
+	                $("#mapWithUser").html(output);
+	            }
+			});
+		}
+	}
 </script>

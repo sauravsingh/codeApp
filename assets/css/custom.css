@@ -614,3 +614,24 @@ input[type="radio"] + label {
 #flashMsg{right: 0;position: fixed;padding: 3px;background: #ccc;color: #000;border-radius: 7px;}
 .padd20{padding-top: 20px;padding-bottom: 20px;}
 #loading{position: fixed;background: url(../images/loading.gif) cover;}
+.font-tiny{font-size: 0.88em;}
+
+.pagination { display: inline-block; }
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a:hover {
+  text-decoration: none;
+}
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+}
+
+.pagination a:hover:not(.active) { background-color: #ddd; }

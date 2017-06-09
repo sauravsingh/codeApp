@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class main extends CI_Model {
+class MainModel extends CI_Model {
 
 	function __construct(){
 	    parent::__construct();
@@ -61,6 +61,15 @@ class main extends CI_Model {
 		$result = $query->row();
 		return $result->$column;
 	}
+	function getSpecificRecord($table,$columnName,$whereCondition,$orderBy=""){
+		$this->db->select($columnName);
+		if($orderBy != ""){
+			$this->db->order_by($orderBy, 'DESC');
+		}		
+		$query = $this->db->get_where($table, $whereCondition);
+		$result = $query->result();
+		return $result;
+	}
 	function getMultiRecord($table,$whereCondition){
 		$this->db->select('*');
 		$query = $this->db->get_where($table, $whereCondition);
@@ -72,5 +81,11 @@ class main extends CI_Model {
 		$query = $this->db->query($sql);
 		$result = $query->row();
 		return $result->$column;
+	}
+	function goBack(){
+		$output = '<div class="col-lg-2"><br><br>  
+                <button class="btn btn-primary" onclick="window.history.back()">Back</button>
+            </div>';
+        return $output;
 	}
 }

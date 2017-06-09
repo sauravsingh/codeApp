@@ -10,7 +10,7 @@ class Recharge extends CI_Controller{
 	    if (!isset($_SESSION['userId'])) {
 	    	redirect('login');
 	    }
-	    $this->load->Model('services');
+	    $this->load->Model('ServicesModel','services');
 	}
 
 
@@ -38,7 +38,7 @@ class Recharge extends CI_Controller{
 				<option value='0'>Select Operator</option>";
 				$serviceList = $this->serviceList();
 				foreach ($serviceList as $rowSubCategory){
-					$msg .= "<option value='".$rowSubCategory->services_id."'>".$rowSubCategory->services_name."</option>";
+					$msg .= "<option value='".$rowSubCategory->services_code."'>".$rowSubCategory->services_name."</option>";
 				}
 				$msg .="</select></div>";
 				$msg .= "<div class='form-group'><input type='text' id='rechargeAmt' name='rechargeAmt' class='form-control' placeholder='Enter recharge amount'></div>";
@@ -102,7 +102,7 @@ class Recharge extends CI_Controller{
                     'type'  => 'text',
                     'name' => 'operatorNameSh',
                     'class' => 'form-control readonly',
-                    'value' => $this->services->getOperatorNameById($data['rechargeComp']),
+                    'value' => $this->services->getOperatorNameByCode($data['rechargeComp']),
                     'readonly' => 'readonly'
                     );
                 $rechargeAmt = array(
@@ -136,11 +136,95 @@ class Recharge extends CI_Controller{
 		}
 	//proceed for payment
 	public function proceed(){
-		//print_r($_POST);
 		$remainingWalletAmt = $this->main->getWalletBalById($_SESSION['userId']);
 		if($remainingWalletAmt > $_POST['rechargeAmt']){
-			print_r($_POST);
-			
+			$this->load->helper('api_helper');
+			$connectionStatus = "true";//checkConnection();
+			if($connectionStatus=="true"){
+				$output = makeRecharge();
+				//print_r($output);
+				$customFunc = makeCustomMsg($output);
+				if($customFunc['status'] == "success"){
+					$dataArray = array(
+						'order_id' => rand(1111111111,9999999999),
+						'status' => 'success',
+						'mobile' => $_POST['rechargeNumber'],
+						'amount' => $_POST['rechargeAmt'],
+						'operator' => $_POST['rechargeOperator'],
+						'conn_type' => $_POST['rechargeType'],
+						'ref_code' => $customFunc['refCode'],
+						'mars_ref' => $customFunc['marsRef'],
+						'api_response' => $output,
+						'rcg_by' => $_SESSION['userId'],
+						'rcg_on' => date('Y-m-d H:i:s'),
+						'ip' => $_SERVER['REMOTE_ADDR']
+						);
+					$this->main->insertQuery('recharge_details',$dataArray);
+					$layout = "<table class='table table-border'>";
+					$layout .= "<tr><td>Status</td><td>Processed</td>";
+					$layout .= "<tr><td>Number</td><td>".$_POST['rechargeNumber']."</td></tr>";
+					$layout .= "<tr><td>Amount</td><td>".$_POST['rechargeAmt']."</td></tr>";
+					$layout .= "<tr><td>Transaction Code</td><td>".$customFunc['refCode']."</td></tr>";
+					$layout .= "</table>";
+				}
+				else if($customFunc['status'] == "error"){
+					$dataArray = array(
+						'order_id' => rand(1111111111,9999999999),
+						'status' => 'error',
+						'mobile' => $_POST['rechargeNumber'],
+						'amount' => $_POST['rechargeAmt'],
+						'operator' => $_POST['rechargeOperator'],
+						'conn_type' => $_POST['rechargeType'],
+						'ref_code' => $customFunc['refCode'],
+						'rcg_err_code' => $customFunc['errorCode'],
+						'rcg_err_msg' => $customFunc['message'],
+						'api_response' => $output,
+						'rcg_by' => $_SESSION['userId'],
+						'rcg_on' => date('Y-m-d H:i:s'),
+						'ip' => $_SERVER['REMOTE_ADDR']
+						);
+					$this->main->insertQuery('recharge_details',$dataArray);
+					$layout = "<table class='table table-border'>";
+					$layout .= "<tr><td>Status</td><td>Not Processed</td>";
+					$layout .= "<tr><td>Number</td><td>".$_POST['rechargeNumber']."</td></tr>";
+					$layout .= "<tr><td>Amount</td><td>".$_POST['rechargeAmt']."</td></tr>";
+					$layout .= "<tr><td>Transaction Code</td><td>".$customFunc['refCode']."</td></tr>";
+					$layout .= "<tr><td>Message</td><td>".$customFunc['message']."</td></tr>";
+					$layout .= "</table>";
+				}
+				elseif($customFunc['status'] == "unknown"){
+					$dataArray = array(
+						'order_id' => rand(1111111111,9999999999),
+						'status' => 'unknown',
+						'mobile' => $_POST['rechargeNumber'],
+						'amount' => $_POST['rechargeAmt'],
+						'operator' => $_POST['rechargeOperator'],
+						'conn_type' => $_POST['rechargeType'],
+						'rcg_by' => $_SESSION['userId'],
+						'rcg_on' => date('Y-m-d H:i:s'),
+						'ip' => $_SERVER['REMOTE_ADDR']
+						);
+					$this->main->insertQuery('recharge_details',$dataArray);
+					$layout = "<table class='table table-border'>";
+					$layout .= "<tr><td>Status</td><td>Unknown Request</td>";
+					$layout .= "<tr><td>Number</td><td>".$_POST['rechargeNumber']."</td></tr>";
+					$layout .= "<tr><td>Amount</td><td>".$_POST['rechargeAmt']."</td></tr>";
+					$layout .= "<tr><td>Message</td><td>Unknown Request, try with correct data</td></tr>";
+					$layout .= "</table>";
+				}
+				$data['title'] = "Recharge response";
+				$data['layout'] = $layout;
+				$this->load->view('header',$data);
+				$this->load->view('recharge_output', $data);
+				$this->load->view('footer');
+			}
+			else{
+				$data['title'] = "Error Page";
+				$data['errorMsg'] = "Something went wrong, please contact to admin!!!";
+				$this->load->view('header',$data);
+				$this->load->view('error', $data);
+				$this->load->view('footer');
+			}
 		}
 		else{
 			$data['title'] = "Insufficient balance";
